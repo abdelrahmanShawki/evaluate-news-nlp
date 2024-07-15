@@ -18,12 +18,11 @@
 
         <main>
             <section>
-                <form id="urlForm">
-                    <input id="name" type="text" name="url" placeholder="Enter URL" required>
-                    <button id="submitButton" type="submit">Submit</button>
+                <form id="urlForm" onsubmit="return lib1.handleSubmit(event)">
+                    <input id="name" type="text" name="input" value="" placeholder="URL here">
+                    <input type="submit" name="" value="submit" onclick="return lib1.handleSubmit(event)" onsubmit="return lib1.handleSubmit(event)">
                 </form>
-                
-            </section>
+            <section>
 
             <section>
                 <strong>Form Results:</strong>
@@ -34,6 +33,5 @@
         <footer>
             <p>This is a footer</p>
         </footer>
-
     </body>
 </html>

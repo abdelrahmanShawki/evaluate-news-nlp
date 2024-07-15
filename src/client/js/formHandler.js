@@ -1,30 +1,45 @@
-// Replace checkForName with a function that checks the URL
-import { checkForName } from './nameChecker'
+import { checkForURL } from './urlChecker';
 
-// If working on Udacity workspace, update this with the Server API URL e.g. `https://wfkdhyvtzx.prod.udacity-student-workspaces.com/api`
-// const serverURL = 'https://wfkdhyvtzx.prod.udacity-student-workspaces.com/api'
-const serverURL = 'https://localhost:8000/api'
-
-const form = document.getElementById('urlForm');
-form.addEventListener('submit', handleSubmit);
-
-function handleSubmit(event) {
+async function handleSubmit(event) {
     event.preventDefault();
-
-    // Get the URL from the input field
-    const formText = document.getElementById('name').value;
-
-    // This is an example code that checks the submitted name. You may remove it from your code
-    checkForName(formText);
     
-    // Check if the URL is valid
- 
-        // If the URL is valid, send it to the server using the serverURL constant above
-      
+    const formText = document.getElementById('name').value;
+    
+    if (!checkForURL(formText)) {
+        alert("Please enter a valid URL.");
+        return;
+    }
+
+    console.log("::: Form Submitted :::");
+
+    // Fetch analysis from the server
+    try {
+        const response = await fetch('http://localhost:8000/api', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: formText })
+        });
+
+        const data = await response.json();
+        console.log(data); //test
+        updateUI(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
-// Function to send data to the server
+function updateUI(data) {
+    const polarityTerms = data.polarity_terms.map(term => `<li>${term.text} (${term.score_tag})</li>`).join('');
+    
+    document.getElementById('results').innerHTML = `
+        <p>Subjectivity: ${data.subjectivity}</p>
+        <p>Text: ${data.text}</p>
+        <p>Polarity Terms:</p>
+        <ul>${polarityTerms}</ul>
+    `;
+}
 
-// Export the handleSubmit function
 export { handleSubmit };
-

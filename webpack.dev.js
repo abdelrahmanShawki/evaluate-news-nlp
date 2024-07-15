@@ -2,10 +2,18 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlWebPackPlugin = require("html-webpack-plugin")
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
     entry: './src/client/index.js',
     mode: 'development',
+    output: {
+        libraryTarget: 'var', 
+        library: 'lib1',
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'main.js'  
+      },
     devtool: 'source-map',
     stats: 'verbose',
     module: {
@@ -27,17 +35,24 @@ module.exports = {
             filename: "./index.html",
         }),
         new CleanWebpackPlugin({
-            // Simulate the removal of files
             dry: true,
-            // Write Logs to Console
             verbose: true,
-            // Automatically remove all unused webpack assets on rebuild
             cleanStaleWebpackAssets: true,
             protectWebpackAssets: false
         })
     ],
     devServer: {
-        port: 3000,
-        allowedHosts: 'all'
-    }
+        port: 9000,
+        allowedHosts: 'all',
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
+        compress: true,
+    } , 
+    optimization: {
+        minimizer: [
+          new TerserPlugin(), // Minify JavaScript
+          new CssMinimizerPlugin() // Minify CSS
+        ],
+      }
 }
