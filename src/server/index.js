@@ -31,7 +31,7 @@ app.post('/api', async (req, res) => {
     const apiKey = process.env.API_KEY;
     const apiURL = process.env.API_URL;
 
-    try {
+    
         const formdata = new FormData();
         formdata.append("key", apiKey);
         formdata.append("txt", text);
@@ -43,13 +43,14 @@ app.post('/api', async (req, res) => {
             redirect: 'follow'
         };
 
-        const response = await fetch(apiURL, requestOptions); // use await to handle promise
-        const data = await response.json(); // properly handle JSON parsing with await
+        const response = (await fetch(apiURL, requestOptions)).
+        then(response => ({
+            status: response.status,
+            body : response.json()
+        }))
+        .then(({ status, body }) => console.log(status, body))
+        .catch(error => console.log('error', error));
 
-        console.log("Status:", response.status, "Body:", data);
-        res.send(data); // send the parsed data back to the client
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send({ error: 'Failed to fetch data from API' });
-    }
-});
+     
+    
+})
